@@ -134,6 +134,6 @@ const courseSchema = new Schema(
   }
 );
 
-const Event = model('course', courseSchema);
+const Event = model('event', courseSchema);
 
 export default Event;
