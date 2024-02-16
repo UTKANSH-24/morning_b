@@ -133,41 +133,6 @@ export const gettcacordinatorByEventId = asyncHandler(async (req, res, next) => 
   });
 });
 
-// export const addParticipantToEventById = asyncHandler(async (req, res, next) => {
-//   const { title, description } = req.body;
-//   const { id } = req.params;
-
-//   let lectureData = {};
-
-//   if (!title || !description) {
-//     return next(new AppError('Title and Description are required', 400));
-//   }
-
-//   const event = await Event.findById(id);
-
-//   if (!event) {
-//     return next(new AppError('Invalid Event id or Event not found.', 400));
-//   }
-
-//   console.log(event);
-
-//   event.participant.push({
-//     title,
-//     description,
-
-//   });
-
-//   event.numberOfParticipants = event.participant.length;
-
-
-//   await event.save();
-
-//   res.status(200).json({
-//     success: true,
-//     message: 'Event lecture added successfully',
-//     event,
-//   });
-// });
 
 export const addParticipantToEventById = asyncHandler(async (req, res, next) => {
   const { college, teamName, participants} = req.body;
@@ -448,17 +413,14 @@ export const updateParticipantVerification = asyncHandler(async (req, res, next)
     return next(new AppError('Invalid Event Id or Event does not exist.', 404));
   }
 
-  // Find the participant by lectureId
   const participant = event.participant.find(participan => participan._id.toString() === lectureId.toString());
 
   if (!participant) {
     return next(new AppError('Participant not found.', 404));
   }
 
-  // Update isverified field to true
   participant.isverified = true;
 
-  // Save the changes to the Course object
   await event.save();
 
   res.status(200).json({
@@ -470,7 +432,6 @@ export const updateParticipantVerification = asyncHandler(async (req, res, next)
 export const removeEvent = asyncHandler(async (req, res, next) => {
 
   const { id } = req.params;
-  // const { id } = req.params;
 
 
   if (!id) {
@@ -498,43 +459,29 @@ export const removeEvent = asyncHandler(async (req, res, next) => {
 });
 
 
-/**
- * @UPDATE_Course_BY_ID
- * @ROUTE @PUT {{URL}}/api/v1/Courses/:id
- * @ACCESS Private (Admin only)
- */
 export const updateEventById = asyncHandler(async (req, res, next) => {
-  // Extracting the Course id from the request params
   const { id } = req.params;
 
-  // Finding the Course using the Course id
   const event = await Event.findByIdAndUpdate(
     id,
     {
-      $set: req.body, // This will only update the fields which are present
+      $set: req.body,
     },
     {
-      runValidators: true, // This will run the validation checks on the new data
+      runValidators: true, 
     }
   );
 
-  // If no Course found then send the response for the same
   if (!event) {
     return next(new AppError('Invalid Event id or Event not found.', 400));
   }
 
-  // Sending the response after success
   res.status(200).json({
     success: true,
     message: 'Event updated successfully',
   });
 });
 
-/**
- * @DELETE_Course_BY_ID
- * @ROUTE @DELETE {{URL}}/api/v1/Courses/:id
- * @ACCESS Private (Admin only)
- */
 export const deleteEventById = asyncHandler(async (req, res, next) => {
 
   const { id } = req.params;
