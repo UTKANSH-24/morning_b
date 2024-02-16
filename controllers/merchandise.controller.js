@@ -6,7 +6,7 @@ import Merchandise from '../models/merchandise.model.js';
 //order a product
 //this will come from front-end form...
 export const registerTshirt = asyncHandler(async (req, res, next) => {
-    // console.log(req.body);
+    console.log(req.body);
 
     const {
         nameOnCloth,
@@ -19,28 +19,38 @@ export const registerTshirt = asyncHandler(async (req, res, next) => {
         phoneNumber,
         rollNumber,
         wtpNumber } = req.body;
-    const order = await Merchandise.create({
-        nameOnCloth,
-        applicantName,
-        clothId,
-        quantity,
-        sizeOfCloth,
-        hostelName,
-        paymentReferenceNumber,
-        phoneNumber,
-        rollNumber,
-        wtpNumber
-    });
 
-    if (!order) {
-        return next(new AppError('Problem in placing order.', 404));
-    }
+        try{
+            const order = await Merchandise.create({
+                nameOnCloth,
+                applicantName,
+                clothId,
+                quantity,
+                sizeOfCloth,
+                hostelName,
+                paymentReferenceNumber,
+                phoneNumber,
+                rollNumber,
+                wtpNumber
+            });
+        
+            console.log(order);
+        
+            if (!order) {
+                return next(new AppError('Problem in placing order.', 404));
+            }
+        
+            return res.status(201).json({
+                success: true,
+                message: 'Order placed successfully',
+                order
+            });
 
-    return res.status(201).json({
-        success: true,
-        message: 'Order placed successfully',
-        order
-    });
+        }catch(err){
+            console.log(err);
+            res.status(500).json({success:false,message:'Server error.'})
+        }
+    
 });
 
 
@@ -100,7 +110,7 @@ export const getVerifiedPaymentList = asyncHandler(async (req, res, next) => {
 // Change Verification Status
 export const changeOrderVerificationStatus = asyncHandler(async (req, res, next) => {
     const { orderId, status } = req.body;
-    
+
     const updatedOrder = await Merchandise.findByIdAndUpdate(orderId, { paymentVerified: status }, { new: true });
 
     if (!updatedOrder) {

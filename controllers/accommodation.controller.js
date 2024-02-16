@@ -5,17 +5,21 @@ import Accommodation from '../models/accommodation.model.js';
 
 
 export const registerAccommodation = asyncHandler(async (req, res, next) => {
+    // console.log(req.body);
     const {
         // teamName,
-        registrantId,
+        // registrantId,
         // fromDate,
         // toDate,
+        persons,
         numberOfDays,
         numberOfPersons,
         paymentReferenceNumber,
         totalNumberOfDiet,
         accommodationType
     } = req.body;
+    console.log(req.user.id);
+    const registrantId= req.user.id;
     const user = await User.findById(registrantId);
     if (!user) {
         return next(new AppError('User not exist', 404));
@@ -27,6 +31,7 @@ export const registerAccommodation = asyncHandler(async (req, res, next) => {
         // toDate,
         numberOfDays,
         numberOfPersons,
+        persons,
         paymentReferenceNumber,
         totalNumberOfDiet,
         accommodationType
@@ -34,7 +39,7 @@ export const registerAccommodation = asyncHandler(async (req, res, next) => {
     if (!accommodation) {
         return next(new AppError('Error in registering', 501));
     }
-    user.registeredAccommodation.push(accommodation.id);
+    user.registeredAccommodations.push(accommodation.id);
     await user.save();
     res.status(200).json({ success: true, message: 'You are done.' });
 });

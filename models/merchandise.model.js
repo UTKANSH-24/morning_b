@@ -30,7 +30,7 @@ const merchandiseSchema = new Schema({
     },
     hostelName: {
         type: String,
-        enum: ['A','MBH-A', 'MBH-B', 'MBH-F', 'BH-6', 'NEW MGH'],
+        // enum: ['A','MBH-A', 'MBH-B', 'MBH-F', 'BH-6', 'NEW MGH'],
         required: true,
     },
     paymentReferenceNumber: {
