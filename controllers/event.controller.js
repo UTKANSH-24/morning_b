@@ -18,7 +18,7 @@ export const getAllEvents = asyncHandler(async (req, res, next) => {
 
       res.status(200).json({
         success: true,
-        message: 'All Courses',
+        message: 'All Events',
         events,
       });
     } catch (error) {
@@ -36,7 +36,7 @@ export const getAllEvents = asyncHandler(async (req, res, next) => {
 
       res.status(200).json({
         success: true,
-        message: 'All Courses',
+        message: 'All Events',
         events,
       });
     } catch (error) {
@@ -68,7 +68,7 @@ export const createEvent = asyncHandler(async (req, res, next) => {
 
   if (!event) {
     return next(
-      new AppError('Course could not be created, please try again', 400)
+      new AppError('Event could not be created, please try again', 400)
     );
   }
 
@@ -77,7 +77,7 @@ export const createEvent = asyncHandler(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    message: 'Course created successfully',
+    message: 'Event created successfully',
     event,
   });
 });
@@ -94,7 +94,7 @@ export const getParticipantsByEventId = asyncHandler(async (req, res, next) => {
     const event = await Course.findById(id);
 
     if (!event) {
-      return res.status(404).json({ success: false, message: 'Course not found' });
+      return res.status(404).json({ success: false, message: 'Event not found' });
     }
 
     let participating;
@@ -109,7 +109,7 @@ export const getParticipantsByEventId = asyncHandler(async (req, res, next) => {
     console.log(participating);
     res.status(200).json({
       success: true,
-      message: 'Course participants fetched successfully',
+      message: 'Events participants fetched successfully',
       participants: participating,
     });
   } catch (error) {
@@ -123,12 +123,12 @@ export const gettcacordinatorByEventId = asyncHandler(async (req, res, next) => 
   const event = await Course.findById(id);
 
   if (!event) {
-    return next(new AppError('Invalid Course id or Course not found.', 408));
+    return next(new AppError('Invalid Event id or Event not found.', 408));
   }
 
   res.status(200).json({
     success: true,
-    message: 'Course participants fetched successfully',
+    message: 'Event participants fetched successfully',
     tcacoordinator: event.tcacoordinator,
   });
 });
@@ -226,7 +226,7 @@ export const addtcacoordinatorById = asyncHandler(async (req, res, next) => {
   const event = await Course.findById(id);
 
   if (!event) {
-    return next(new AppError('Invalid Course id or Course not found.', 400));
+    return next(new AppError('Invalid Event id or Event not found.', 400));
   }
 
 
@@ -241,7 +241,7 @@ export const addtcacoordinatorById = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: 'Course lecture added successfully',
+    message: 'Event Participant added successfully',
     event,
   });
 });
@@ -262,7 +262,7 @@ export const addclubcoordinatorById = asyncHandler(async (req, res, next) => {
   const event = await Course.findById(id);
 
   if (!event) {
-    return next(new AppError('Invalid Course id or Course not found.', 400));
+    return next(new AppError('Invalid Event id or Event not found.', 400));
   }
 
 
@@ -274,7 +274,7 @@ export const addclubcoordinatorById = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: 'invoked club coordinator',
+    message: 'Club coordinator added Sucessfully',
     event,
   });
 });
@@ -294,7 +294,7 @@ export const addtcacordinatorToEventById = asyncHandler(async (req, res, next) =
   const event = await Course.findById(id);
 
   if (!event) {
-    return next(new AppError('Invalid Course id or Course not found.', 400));
+    return next(new AppError('Invalid Event id or Event not found.', 400));
   }
 
 
@@ -306,7 +306,7 @@ export const addtcacordinatorToEventById = asyncHandler(async (req, res, next) =
 
   res.status(200).json({
     success: true,
-    message: 'invoked tca cordinator',
+    message: 'Tca  cordinator added sucessfully',
     event,
   });
 });
@@ -327,7 +327,7 @@ export const addfacultycoordinatorById = asyncHandler(async (req, res, next) => 
   const event = await Course.findById(id);
 
   if (!event) {
-    return next(new AppError('Invalid Course id or Course not found.', 400));
+    return next(new AppError('Invalid Event id or Event not found.', 400));
   }
 
 
@@ -335,15 +335,13 @@ export const addfacultycoordinatorById = asyncHandler(async (req, res, next) => 
     userid,
   });
 
-  // Course.numberOfLectures = Course.participants.length;
 
-  // Save the Course object
 
   await event.save();
 
   res.status(200).json({
     success: true,
-    message: 'Course lecture added successfully',
+    message: 'Event Participant added successfully',
     event,
   });
 });
@@ -357,17 +355,17 @@ export const removeParticipantsFromEvent = asyncHandler(async (req, res, next) =
   console.log(courseId);
 
   if (!courseId) {
-    return next(new AppError('Course ID is required', 400));
+    return next(new AppError('Event ID is required', 400));
   }
 
   if (!lectureId) {
-    return next(new AppError('Lecture ID is required', 400));
+    return next(new AppError('Participant ID is required', 400));
   }
 
   const event = await Course.findById(courseId);
 
   if (!event) {
-    return next(new AppError('Invalid ID or Course does not exist.', 404));
+    return next(new AppError('Event ID or Event does not exist.', 404));
   }
 
   const lectureIndex = event.participant.findIndex(
@@ -398,7 +396,7 @@ export const removeParticipantsFromEvent = asyncHandler(async (req, res, next) =
     
     res.status(200).json({
       success: true,
-      message: 'Course lecture removed successfully',
+      message: 'Participant removed successfully',
     });
   }
 
@@ -417,7 +415,7 @@ export const removeParticipantsFromEvent = asyncHandler(async (req, res, next) =
     // Return response
     res.status(200).json({
       success: true,
-      message: 'Course clubcoordinator removed successfully',
+      message: 'Clubcoordinator removed successfully',
     });
   }
   if (tcacoordinatorj !== -1) {
@@ -426,7 +424,7 @@ export const removeParticipantsFromEvent = asyncHandler(async (req, res, next) =
     await event.save();
     res.status(200).json({
       success: true,
-      message: 'Course clubcoordinator removed successfully',
+      message: 'Tcacoordinator removed successfully',
     });
   }
 
@@ -437,17 +435,17 @@ export const updateParticipantVerification = asyncHandler(async (req, res, next)
   const { courseId, lectureId } = req.query;
 
   if (!courseId) {
-    return next(new AppError('Course ID is required', 400));
+    return next(new AppError('Event Id is required', 400));
   }
 
   if (!lectureId) {
-    return next(new AppError('Lecture ID is required', 400));
+    return next(new AppError('Participant Id is required', 400));
   }
 
   const event = await Course.findById(courseId);
 
   if (!event) {
-    return next(new AppError('Invalid ID or Course does not exist.', 404));
+    return next(new AppError('Invalid Event Id or Event does not exist.', 404));
   }
 
   // Find the participant by lectureId
@@ -465,7 +463,7 @@ export const updateParticipantVerification = asyncHandler(async (req, res, next)
 
   res.status(200).json({
     success: true,
-    message: 'Participant verification updated successfully',
+    message: 'Participant verified Sucessfully',
   });
 });
 
@@ -476,13 +474,13 @@ export const removeEvent = asyncHandler(async (req, res, next) => {
 
 
   if (!id) {
-    return next(new AppError('Course ID is fgvbhfcgvhbj required', 400));
+    return next(new AppError('Event ID is required', 400));
   }
 
   const event = await Course.findById(id);
 
   if (!event) {
-    return next(new AppError('Invalid ID or Course does not exist.', 404));
+    return next(new AppError('Invalid Event ID or Event does not exist.', 404));
   }
 
 
@@ -493,7 +491,7 @@ export const removeEvent = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: 'Course lecture removed successfully',
+    message: 'Event removed successfully',
   });
 
 
@@ -522,13 +520,13 @@ export const updateEventById = asyncHandler(async (req, res, next) => {
 
   // If no Course found then send the response for the same
   if (!event) {
-    return next(new AppError('Invalid Course id or Course not found.', 400));
+    return next(new AppError('Invalid Event id or Event not found.', 400));
   }
 
   // Sending the response after success
   res.status(200).json({
     success: true,
-    message: 'Course updated successfully',
+    message: 'Event updated successfully',
   });
 });
 
@@ -546,7 +544,7 @@ export const deleteEventById = asyncHandler(async (req, res, next) => {
 
 
   if (!event) {
-    return next(new AppError('Course with given id does not exist.', 404));
+    return next(new AppError('Event with given id does not exist.', 404));
   }
 
 
@@ -554,6 +552,6 @@ export const deleteEventById = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: 'Course deleted successfully',
+    message: 'Event deleted successfully',
   });
 });
