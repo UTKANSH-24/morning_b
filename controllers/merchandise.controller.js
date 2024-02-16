@@ -58,10 +58,6 @@ export const registerTshirt = asyncHandler(async (req, res, next) => {
 
 //getUnverifiedList
 export const getUnverifiedPaymentList = asyncHandler(async (req, res, next) => {
-    // const { _id } = req.body;
-
-    // const user = await User.findById(_id).select("+role");
-    // if (user && (user.role === 'COORDINATOR' || user.role === 'ADMIN')) {
     const { clothId } = req.params;
     if (clothId) {
         const pendingVerification = await Merchandise.find({ clothId, paymentVerified: false });
@@ -76,17 +72,10 @@ export const getUnverifiedPaymentList = asyncHandler(async (req, res, next) => {
         data: pendingVerification,
         // role: user.role,
     });
-    // } else {
-    //     return next(new AppError(`You don't have access to this URL.`, 403));
-    // }
 });
 
 //getVerifiedList
 export const getVerifiedPaymentList = asyncHandler(async (req, res, next) => {
-    // const { _id } = req.body;
-
-    // const user = await User.findById(_id).select("+role");
-    // if (user && (user.role === 'COORDINATOR' || user.role === 'ADMIN')) {
     const { clothId } = req.params;
     if (clothId) {
         const verifiedPaymentList = await Merchandise.find({ clothId, paymentVerified: true });
@@ -101,22 +90,20 @@ export const getVerifiedPaymentList = asyncHandler(async (req, res, next) => {
         data: verifiedPaymentList,
         // role: user.role,
     });
-    // } else {
-    //     return next(new AppError(`You don't have access to this URL.`, 403));
-    // }
 });
 
 
 // Change Verification Status
 export const changeOrderVerificationStatus = asyncHandler(async (req, res, next) => {
     const { orderId, status } = req.body;
+    // console.log(req.body);
 
     const updatedOrder = await Merchandise.findByIdAndUpdate(orderId, { paymentVerified: status }, { new: true });
 
     if (!updatedOrder) {
         return next(new AppError('Order not found.', 404));
     }
-
+    console.log(updatedOrder);
     res.status(200).json({
         success: true,
         message: 'Payment Status successfully updated.',

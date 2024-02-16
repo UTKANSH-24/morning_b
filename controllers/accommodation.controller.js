@@ -67,13 +67,13 @@ export const getUnverifiedAccommodationList = asyncHandler(async (req, res, next
     const { type } = req.params;
 
     if (type) {
-        const data = await Accommodation.find({ accommodationType: type, paymentVerified: false });
+        const data = await Accommodation.find({ accommodationType: type, paymentVerified: false }).populate('registrantId', 'email');
         return res.status(200).json({
             success: true,
             data
         })
     }
-    const data = await Accommodation.find({ paymentVerified: false });
+    const data = await Accommodation.find({ paymentVerified: false }).populate('registrantId', 'email');
     return res.status(200).json({
         success: true,
         data
@@ -85,13 +85,13 @@ export const getVerifiedAccommodationList = asyncHandler(async (req, res, next) 
     const { type } = req.params;
 
     if (type) {
-        const data = await Accommodation.find({ accommodationType: type, paymentVerified: true });
+        const data = await Accommodation.find({ accommodationType: type, paymentVerified: true }).populate('registrantId', 'email');
         return res.status(200).json({
             success: true,
             data
         })
     }
-    const data = await Accommodation.find({ paymentVerified: true });
+    const data = await Accommodation.find({ paymentVerified: true }).populate('registrantId', 'email');
     return res.status(200).json({
         success: true,
         data
@@ -115,7 +115,7 @@ export const changeAccommodationVerificationStatus = asyncHandler(async (req, re
 });
 
 export const getAllRoomList = asyncHandler(async (req, res, next) => {
-    const rooms = await Accommodation.find({});
+    const rooms = await Accommodation.find({}).populate('registrantId','email');
     return res.status(200).json({ success: true, data: rooms });
 })
 
