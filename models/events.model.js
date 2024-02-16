@@ -1,151 +1,132 @@
 import { model, Schema } from 'mongoose';
 
-const eventSchema = new Schema(
+const courseSchema = new Schema(
   {
     title: {
       type: String,
       required: [true, 'Title is required'],
-      minlength: [4, 'Title must be at least 4 characters'],
-      maxlength: [90, 'Title cannot be more than 50 characters'],
+      minlength: [8, 'Title must be atleast 8 characters'],
+      maxlength: [50, 'Title cannot be more than 50 characters'],
       trim: true,
-      unique: [true, 'Event name should be unique'],
     },
     description: {
       type: String,
       required: [true, 'Description is required'],
-      // minlength: [20, 'Description must be at least 20 characters long'],
+      minlength: [20, 'Description must be atleast 20 characters long'],
     },
     club: {
       type: String,
-      // enum:[''],
-      required: [true, 'Club name is required'],
+      // required: [true, 'Category is required'],
     },
-    minimumTeamLength: {
+    venue: {
+      type: String,
+      // required: [true, 'Category is required'],
+    },
+    time: {
+      type: String,
+      // required: [true, 'Category is required'],
+    },
+    date: {
+      type: String,
+      // required: [true, 'Category is required'],
+    },
+    minparticipant: {
       type: Number,
-      required: [true, 'Enter the minimum team size'],
-      min: 1,
-      default: 1,
+      
     },
-    maximumTeamLength: {
+    maxparticipant: {
       type: Number,
-      required: [true, 'Enter the maximum team size'],
-      min: 1,
-      default: 1,
+      
     },
+    
+    
 
-    teams: [
+   
+
+    participant: [
       {
+        enrolledby: {
+          type: String,
+          default: "65ae708da82f774c8765"
+
+        },
         teamName: {
           type: String,
-          required: [true, 'You must enter a team name'],
-          // unique: [true, 'This team name is already been taken'],
-        },
-        college: {
-          type: String,
-          required: [true, 'Please enter the college name'],
-        },
-        participants: [
-          {
-            participantName: {
-              type: String,
-              required: [true, 'Participant name is required'],
-            },
-            participantPhone: {
-              type: String,
-              required: [true, 'Phone number is required'],
-            },
+          default: "participantstcaabhi"
 
-            participantBloodGroup: {
-              type: String,
-              required: [true, 'Blood group is required'],
-            },
+        },
+        collegeName: {
+          type: String,
+          default: "participantstcaabhi"
+
+        },
+        participants: [{
+          participantPhone: {
+            type: String,
+            // required: [true, 'Mobile No is required']
+          },
+          participantEmail:{
+            type: String,
+            // required: [true, 'Last Name is required']
+          },
+          participantName:{
+            type: String,
+            // required: [true, 'First Name is required']
           }
+
+        }
         ],
-        paymentReferenceNumber: {
-          type: String,
-          required: [true, 'Payment reference number is required'],
-        },
-        paymentVerified: {
+        isverified: {
           type: Boolean,
-          default: false
+
+          default: false,
+
         },
-        registeredBy: {
-          type: Schema.Types.ObjectId,
-          ref: 'User',
-        },
+
+
       },
     ],
 
-    tcaCoordinators: [
+    tcacoordinator: [
       {
-        tcaCoordinatorName: {
+        userid: {
           type: String,
-          required: [true, 'Please enter the name of coordinator'],
+          default: "tcaabhi"
         },
-        tcaCoordinatorRollNumber: {
-          type: Number,
-          required: [true, 'Please enter the roll number of coordinator'],
-          length: 8,
-        },
-        tcaCoordinatorContact: {
-          type: Number,
-          required: [true, 'Please enter coordinators mobile number'],
-          length: 10,
-        }
-      },
+      }
     ],
 
 
-    clubCoordinators: [
+    clubcoordinator: [
       {
-        clubName: {
+        userid: {
           type: String,
-          required: [true, 'Club coordinator must belong from a club'],
+          default: "clubabhi"
+
         },
-        clubCoordinatorName: {
-          type: String,
-          required: [true, 'Please enter the name of coordinator'],
-        },
-        clubCoordinatorRollNumber: {
-          type: Number,
-          required: [true, 'Please enter the roll number of coordinator'],
-          length: 8,
-        },
-        clubCoordinatorContact: {
-          type: Number,
-          required: [true, 'Please enter coordinators mobile number'],
-          length: 10,
-        }
-      },
+      }
     ],
 
 
-    facultyCoordinators: [
+    facultycoordinator: [
       {
-        facultyName: {
+        userid: {
           type: String,
-          required: [true, 'Faculty name is required'],
+          default: "abhi"
         },
-        facultyEmail: {
-          type: String,
-          required: [true, 'Faculty email is required'],
-        },
-        facultyBranch: {
-          type: String,
-          required: [true, 'Faculty branch is required'],
-        },
+        name: String,
+        department: String,
+
       },
     ],
 
     numberOfParticipants: {
       type: Number,
-      default: 0,
+      default: 5,
     },
-
     createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required:[true,'Please Login.'],
+      type: String,
+      required: [true, 'Course instructor name is required'],
     },
   },
   {
@@ -153,8 +134,6 @@ const eventSchema = new Schema(
   }
 );
 
-const Event = model('Event', eventSchema);
+const Course = model('course', courseSchema);
 
-export default Event;
-
-
+export default Course;
