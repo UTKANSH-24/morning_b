@@ -2,15 +2,15 @@ import fs from 'fs/promises';
 import path from 'path';
 import cloudinary from 'cloudinary';
 import asyncHandler from '../middlewares/asyncHandler.middleware.js';
-import Event from '../models/events.model.js';
+import Course from '../models/events.model.js';
 import AppError from '../utils/AppError.js';
 
-Event
+
 export const getAllEvents = asyncHandler(async (req, res, next) => {
   const userid = req.user;
   if (userid.role == 'USER') {
     try {
-      const events = await Event.find({
+      const events = await Course.find({
         'participants': {
           $elemMatch: { enrolledby: userid.id }
         }
@@ -32,7 +32,7 @@ export const getAllEvents = asyncHandler(async (req, res, next) => {
   
   if (userid.role == 'ADMIN') {
     try {
-      const events = await Event.find({});
+      const events = await Course.find({});
 
       res.status(200).json({
         success: true,
@@ -59,7 +59,7 @@ export const createEvent = asyncHandler(async (req, res, next) => {
     return next(new AppError('All fields are required', 400));
   }
 
-  const event = await Event.create({
+  const event = await Course.create({
     title,
     description,
     club,
@@ -91,7 +91,7 @@ export const getParticipantsByEventId = asyncHandler(async (req, res, next) => {
   console.log(userid);
 
   try {
-    const event = await Event.findById(id);
+    const event = await Course.findById(id);
 
     if (!event) {
       return res.status(404).json({ success: false, message: 'Event not found' });
@@ -120,7 +120,7 @@ export const getParticipantsByEventId = asyncHandler(async (req, res, next) => {
 export const gettcacordinatorByEventId = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const event = await Event.findById(id);
+  const event = await Course.findById(id);
 
   if (!event) {
     return next(new AppError('Invalid Event id or Event not found.', 408));
@@ -143,10 +143,10 @@ export const gettcacordinatorByEventId = asyncHandler(async (req, res, next) => 
 //     return next(new AppError('Title and Description are required', 400));
 //   }
 
-//   const event = await Event.findById(id);
+//   const event = await Course.findById(id);
 
 //   if (!event) {
-//     return next(new AppError('Invalid Event id or Event not found.', 400));
+//     return next(new AppError('Invalid Course id or Course not found.', 400));
 //   }
 
 //   console.log(event);
@@ -164,7 +164,7 @@ export const gettcacordinatorByEventId = asyncHandler(async (req, res, next) => 
 
 //   res.status(200).json({
 //     success: true,
-//     message: 'Event lecture added successfully',
+//     message: 'Course lecture added successfully',
 //     event,
 //   });
 // });
@@ -183,7 +183,7 @@ export const addParticipantToEventById = asyncHandler(async (req, res, next) => 
     return next(new AppError('college,teamName and participants are required', 400));
   }
 
-  const event = await Event.findById(id);
+  const event = await Course.findById(id);
 
   if (!event) {
     return next(new AppError('Invalid event id or event not found.', 400));
@@ -223,7 +223,7 @@ export const addtcacoordinatorById = asyncHandler(async (req, res, next) => {
     return next(new AppError('userid is required', 400));
   }
 
-  const event = await Event.findById(id);
+  const event = await Course.findById(id);
 
   if (!event) {
     return next(new AppError('Invalid Event id or Event not found.', 400));
@@ -259,7 +259,7 @@ export const addclubcoordinatorById = asyncHandler(async (req, res, next) => {
     return next(new AppError('userid is required', 400));
   }
 
-  const event = await Event.findById(id);
+  const event = await Course.findById(id);
 
   if (!event) {
     return next(new AppError('Invalid Event id or Event not found.', 400));
@@ -291,7 +291,7 @@ export const addtcacordinatorToEventById = asyncHandler(async (req, res, next) =
     return next(new AppError('userid is required', 400));
   }
 
-  const event = await Event.findById(id);
+  const event = await Course.findById(id);
 
   if (!event) {
     return next(new AppError('Invalid Event id or Event not found.', 400));
@@ -324,7 +324,7 @@ export const addfacultycoordinatorById = asyncHandler(async (req, res, next) => 
     return next(new AppError('userid is required', 400));
   }
 
-  const event = await Event.findById(id);
+  const event = await Course.findById(id);
 
   if (!event) {
     return next(new AppError('Invalid Event id or Event not found.', 400));
@@ -362,7 +362,7 @@ export const removeParticipantsFromEvent = asyncHandler(async (req, res, next) =
     return next(new AppError('Participant ID is required', 400));
   }
 
-  const event = await Event.findById(courseId);
+  const event = await Course.findById(courseId);
 
   if (!event) {
     return next(new AppError('Event ID or Event does not exist.', 404));
@@ -442,7 +442,7 @@ export const updateParticipantVerification = asyncHandler(async (req, res, next)
     return next(new AppError('Participant Id is required', 400));
   }
 
-  const event = await Event.findById(courseId);
+  const event = await Course.findById(courseId);
 
   if (!event) {
     return next(new AppError('Invalid Event Id or Event does not exist.', 404));
@@ -477,7 +477,7 @@ export const removeEvent = asyncHandler(async (req, res, next) => {
     return next(new AppError('Event ID is required', 400));
   }
 
-  const event = await Event.findById(id);
+  const event = await Course.findById(id);
 
   if (!event) {
     return next(new AppError('Invalid Event ID or Event does not exist.', 404));
@@ -508,7 +508,7 @@ export const updateEventById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   // Finding the Course using the Course id
-  const event = await Event.findByIdAndUpdate(
+  const event = await Course.findByIdAndUpdate(
     id,
     {
       $set: req.body, // This will only update the fields which are present
@@ -540,7 +540,7 @@ export const deleteEventById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
 
-  const event = await Event.findById(id);
+  const event = await Course.findById(id);
 
 
   if (!event) {
