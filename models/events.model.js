@@ -16,19 +16,15 @@ const courseSchema = new Schema(
     },
     club: {
       type: String,
-      // required: [true, 'Category is required'],
     },
     venue: {
       type: String,
-      // required: [true, 'Category is required'],
     },
     time: {
       type: String,
-      // required: [true, 'Category is required'],
     },
     date: {
       type: String,
-      // required: [true, 'Category is required'],
     },
     minparticipant: {
       type: Number,
@@ -63,15 +59,12 @@ const courseSchema = new Schema(
         participants: [{
           participantPhone: {
             type: String,
-            // required: [true, 'Mobile No is required']
           },
           participantEmail:{
             type: String,
-            // required: [true, 'Last Name is required']
           },
           participantName:{
             type: String,
-            // required: [true, 'First Name is required']
           }
 
         }
