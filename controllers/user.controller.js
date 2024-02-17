@@ -24,24 +24,40 @@ export const registerUser = asyncHandler(async (req, res, next) => {
     return next(new AppError('All fields are required', 408));
   }
   const userExists = await User.findOne({ email });
+  
   if (userExists) {
-    return next(new AppError('Email already exists', 409));
+
+    if (userExists.signupverified) {
+      return next(new AppError('Email already exists', 409));
+    } else {
+      userExists.fullName = fullName;
+      userExists.email = email;
+      userExists.password = password;
+      userExists.signupTokenExpiry = undefined;
+      userExists.signupToken = undefined;
+      await userExists.save();
+
+    }
+
+  } else {
+    const userExists = await User.create({
+      fullName,
+      email,
+      password,
+
+    });
+    if (!userExists) {
+      return next(
+        new AppError('User registration failed, please try again later', 400)
+      );
+    }
+
   }
-  const user = await User.create({
-    fullName,
-    email,
-    password,
 
-  });
 
-  if (!user) {
-    return next(
-      new AppError('User registration failed, please try again later', 400)
-    );
-  }
-  const signupToken = await user.generateSignupToken();
+  const signupToken = await userExists.generateSignupToken();
 
-  await user.save();
+  await userExists.save();
 
   const verificationUrl = `${process.env.FRONTEND_URL}/verify/${signupToken}`;
 
@@ -58,10 +74,10 @@ export const registerUser = asyncHandler(async (req, res, next) => {
     });
   } catch (error) {
     // If some error happened we need to clear the forgotPassword* fields in our DB
-    user.signupToken = undefined;
-    user.signupTokenExpiry = undefined;
+    userExists.signupToken = undefined;
+    userExists.signupTokenExpiry = undefined;
 
-    await user.save();
+    await userExists.save();
 
     return next(
       new AppError(
@@ -71,12 +87,12 @@ export const registerUser = asyncHandler(async (req, res, next) => {
     );
   }
 
-  await user.save();
+  await userExists.save();
 
   res.status(201).json({
     success: true,
     message: 'User registered successfully',
-    user,
+    userExists,
   });
 });
 
@@ -236,7 +252,7 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
 
   const user = await User.findOne({
     forgotPasswordToken,
-    forgotPasswordExpiry: { $gt: Date.now() }, 
+    forgotPasswordExpiry: { $gt: Date.now() },
   });
 
   if (!user) {
