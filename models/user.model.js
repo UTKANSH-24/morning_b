@@ -41,6 +41,12 @@ const userSchema = new Schema(
     },
     forgotPasswordToken: String,
     forgotPasswordExpiry: Date,
+    signupToken: String,
+    signupTokenExpiry: Date,
+    signupverified:{
+           type:Boolean,
+           default: false,
+    },
     registeredEvents: [
       {
         type: Schema.Types.ObjectId,
@@ -127,6 +133,21 @@ userSchema.methods = {
 
     return resetToken;
   },
+  generateSignupToken: async function () {
+    const signupToken = crypto.randomBytes(20).toString('hex');
+
+    this.signupToken = crypto
+      .createHash('sha256')
+      .update(signupToken)
+      .digest('hex');
+
+    this.signupTokenExpiry = Date.now() + 15 * 60 * 1000;
+
+    return signupToken;
+  },
+
+
+
 };
 
 const User = model('User', userSchema);
