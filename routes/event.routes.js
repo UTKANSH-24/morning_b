@@ -22,7 +22,7 @@ router
     // upload.single('thumbnail'),
     createEvent
   )
-  .delete(isLoggedIn, authorizeRoles('ADMIN'), removeParticipantsFromEvent)
+  // .delete(isLoggedIn, authorizeRoles('ADMIN'), removeParticipantsFromEvent)
   .put(isLoggedIn, authorizeRoles('ADMIN'), updateParticipantVerification )
 router
   .route('/:id')
@@ -44,7 +44,7 @@ router
 
     addtcacordinatorToEventById
   )
-  .get(isLoggedIn,  gettcacordinatorByEventId) // Added authorizeSubscribers to check if user is admin or subscribed if not then forbid the access to the lectures
+  .get(isLoggedIn,  gettcacordinatorByEventId) 
 
 router
   .route('/lecture/:id')

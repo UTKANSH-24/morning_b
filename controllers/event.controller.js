@@ -4,6 +4,8 @@ import cloudinary from 'cloudinary';
 import asyncHandler from '../middlewares/asyncHandler.middleware.js';
 import Event from '../models/events.model.js';
 import AppError from '../utils/AppError.js';
+import User from '../models/user.model.js';
+import sendEmail from '../utils/sendEmail.js';
 
 Event
 export const getAllEvents = asyncHandler(async (req, res, next) => {
@@ -29,7 +31,7 @@ export const getAllEvents = asyncHandler(async (req, res, next) => {
       });
     }
   }
-  
+
   if (userid.role == 'ADMIN') {
     try {
       const events = await Event.find({});
@@ -52,10 +54,10 @@ export const getAllEvents = asyncHandler(async (req, res, next) => {
 
 
 export const createEvent = asyncHandler(async (req, res, next) => {
-  const { title, description, club, createdBy,venue,time,date,minparticipant,maxparticipant,day } = req.body;
-  console.log("req-body data",req.body);
+  const { title, description, club, createdBy, venue, time, date, minparticipant, maxparticipant, day } = req.body;
+  console.log("req-body data", req.body);
 
-  if (!title || !description || !club || !createdBy||!venue||!time||!date||!minparticipant||!maxparticipant||!day) {
+  if (!title || !description || !club || !createdBy || !venue || !time || !date || !minparticipant || !maxparticipant || !day) {
     return next(new AppError('All fields are required', 400));
   }
 
@@ -63,7 +65,7 @@ export const createEvent = asyncHandler(async (req, res, next) => {
     title,
     description,
     club,
-    createdBy,venue,time,date,minparticipant,maxparticipant,day
+    createdBy, venue, time, date, minparticipant, maxparticipant, day
   });
 
   if (!event) {
@@ -87,8 +89,8 @@ export const getParticipantsByEventId = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const { verified } = req.query;
   const userid = req.user;
-  console.log("userid");
-  console.log(userid);
+  // console.log("userid");
+  // console.log(userid);
 
   try {
     const event = await Event.findById(id);
@@ -100,13 +102,13 @@ export const getParticipantsByEventId = asyncHandler(async (req, res, next) => {
     let participating;
 
     if (verified === 'true') {
-      participating = event.participant.filter(participan=> participan.isverified === true);
+      participating = event.participant.filter(participan => participan.isverified === true);
     } else if (verified === 'false') {
       participating = event.participant.filter(participan => participan.isverified === false);
     } else {
       participating = event.participant;
     }
-    console.log(participating);
+    // console.log(participating);
     res.status(200).json({
       success: true,
       message: 'Events participants fetched successfully',
@@ -135,16 +137,16 @@ export const gettcacordinatorByEventId = asyncHandler(async (req, res, next) => 
 
 
 export const addParticipantToEventById = asyncHandler(async (req, res, next) => {
-  const { college, teamName, participants} = req.body;
+  const { college, teamName, participants } = req.body;
   const userid = req.user;
-  const enrolledby=userid.id;
-  console.log(" const userid = req.user;",userid);
+  const enrolledby = userid.id;
+  console.log(" const userid = req.user;", userid);
   const { id } = req.params;
-  console.log("req.body",req.body);
-  console.log("college",college);console.log("teamName",teamName);console.log("participants",participants);
+  console.log("req.body", req.body);
+  console.log("college", college); console.log("teamName", teamName); console.log("participants", participants);
   let lectureData = {};
 
-  if (!college || !teamName ||!participants) {
+  if (!college || !teamName || !participants) {
     return next(new AppError('college,teamName and participants are required', 400));
   }
 
@@ -349,16 +351,16 @@ export const removeParticipantsFromEvent = asyncHandler(async (req, res, next) =
 
 
 
-    
+
     event.participant.splice(lectureIndex, 1);
 
-    
+
     event.numberOfLectures = event.participant.length;
 
-    
+
     await event.save();
 
-    
+
     res.status(200).json({
       success: true,
       message: 'Participant removed successfully',
@@ -396,39 +398,69 @@ export const removeParticipantsFromEvent = asyncHandler(async (req, res, next) =
 
 });
 
+
 export const updateParticipantVerification = asyncHandler(async (req, res, next) => {
   const { courseId, lectureId } = req.query;
+  const { subjects, messages, isverified } = req.body;
+
+  console.log(isverified);
+  // console.log("subject-", subjects, "--messages", messages);
 
   if (!courseId) {
-    return next(new AppError('Event Id is required', 400));
+    return next(new AppError('Course ID is required', 400));
   }
 
   if (!lectureId) {
-    return next(new AppError('Participant Id is required', 400));
+    return next(new AppError('Lecture ID is required', 400));
   }
 
   const event = await Event.findById(courseId);
 
   if (!event) {
-    return next(new AppError('Invalid Event Id or Event does not exist.', 404));
+    return next(new AppError('Event ID or Event does not exist.', 404));
   }
 
-  const participant = event.participant.find(participan => participan._id.toString() === lectureId.toString());
+  // Find the participant by lectureId
+  const participant = event.participant.find(participant => participant._id.toString() === lectureId.toString());
 
   if (!participant) {
     return next(new AppError('Participant not found.', 404));
   }
 
-  participant.isverified = true;
+  const user = await User.findById(participant.enrolledby);
 
-  await event.save();
+  const email = user.email;
+  try {
 
-  res.status(200).json({
-    success: true,
-    message: 'Participant verified Sucessfully',
-  });
+
+    if (isverified) {
+      participant.isverified = true;
+      await event.save();
+
+
+      const subject = 'Participant Verification';
+      const message = 'You have been successfully Verified';
+      await sendEmail(email, subject, message);
+    }
+
+    if (!isverified) {
+      const subject = subjects;
+      const message = messages;
+      console.log("email-", email);
+      await sendEmail(email, subject, message);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Participant verification updated successfully',
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message:error.message,
+    });
+  }
 });
-
 export const removeEvent = asyncHandler(async (req, res, next) => {
 
   const { id } = req.params;
@@ -468,7 +500,7 @@ export const updateEventById = asyncHandler(async (req, res, next) => {
       $set: req.body,
     },
     {
-      runValidators: true, 
+      runValidators: true,
     }
   );
 
