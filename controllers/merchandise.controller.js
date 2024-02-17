@@ -19,50 +19,51 @@ export const registerTshirt = asyncHandler(async (req, res, next) => {
         rollNumber,
         wtpNumber } = req.body;
 
-        try{
-            const order = await Merchandise.create({
-                nameOnCloth,
-                applicantName,
-                clothId,
-                quantity,
-                sizeOfCloth,
-                hostelName,
-                paymentReferenceNumber,
-                phoneNumber,
-                rollNumber,
-                wtpNumber
-            });
-        
-            console.log(order);
-        
-            if (!order) {
-                return next(new AppError('Problem in placing order.', 404));
-            }
-        
-            return res.status(201).json({
-                success: true,
-                message: 'Order placed successfully',
-                order
-            });
+    try {
+        const order = await Merchandise.create({
+            nameOnCloth,
+            applicantName,
+            clothId,
+            quantity,
+            sizeOfCloth,
+            hostelName,
+            paymentReferenceNumber,
+            phoneNumber,
+            rollNumber,
+            wtpNumber,
+            registrantId: req.user.id,
+        });
 
-        }catch(err){
-            console.log(err);
-            res.status(500).json({success:false,message:'Server error.'})
+        console.log(order);
+
+        if (!order) {
+            return next(new AppError('Problem in placing order.', 404));
         }
-    
+
+        return res.status(201).json({
+            success: true,
+            message: 'Order placed successfully',
+            order
+        });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: 'Server error.' })
+    }
+
 });
 
 
 export const getUnverifiedPaymentList = asyncHandler(async (req, res, next) => {
     const { clothId } = req.params;
     if (clothId) {
-        const pendingVerification = await Merchandise.find({ clothId, paymentVerified: false });
+        const pendingVerification = await Merchandise.find({ clothId, paymentVerified: false }).populate('registrantId','email');
         return res.status(200).json({
             success: true,
             data: pendingVerification,
         });
     }
-    const pendingVerification = await Merchandise.find({ paymentVerified: false });
+    const pendingVerification = await Merchandise.find({ paymentVerified: false }).populate('registrantId', 'email');
     res.status(200).json({
         success: true,
         data: pendingVerification,
@@ -72,13 +73,13 @@ export const getUnverifiedPaymentList = asyncHandler(async (req, res, next) => {
 export const getVerifiedPaymentList = asyncHandler(async (req, res, next) => {
     const { clothId } = req.params;
     if (clothId) {
-        const verifiedPaymentList = await Merchandise.find({ clothId, paymentVerified: true });
+        const verifiedPaymentList = await Merchandise.find({ clothId, paymentVerified: true }).populate('registrantId', 'email');
         return res.status(200).json({
             success: true,
             data: verifiedPaymentList,
         });
     }
-    const verifiedPaymentList = await Merchandise.find({ paymentVerified: true });
+    const verifiedPaymentList = await Merchandise.find({ paymentVerified: true }).populate('registrantId', 'email');
     res.status(200).json({
         success: true,
         data: verifiedPaymentList,

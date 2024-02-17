@@ -38,7 +38,7 @@ export const getContactUs = asyncHandler(async (req, res, next) => {
 });
 
 export const replyQuery = asyncHandler(async (req, res, next) => {
-  console.log(req.body);
+  // console.log(req.body);
   const { queryId, replyMessage } = req.body;
 
   const query = await Contact.findOne({ _id: queryId });
@@ -63,13 +63,20 @@ export const replyQuery = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, message: 'Reply Sent' });
 });
 
-
+export const rejectionMail = asyncHandler(async (req, res, next) => {
+  const { email,subject ,message } = req.body;
+  await sendEmail(email, subject, message);
+  res.status(200).json({
+    success: true,
+    message: 'Mail sent',
+  });
+})
 
 export const userStats = asyncHandler(async (req, res, next) => {
   const allUsersCount = await User.countDocuments();
 
   const subscribedUsersCount = await User.countDocuments({
-    'subscription.status': 'active', 
+    'subscription.status': 'active',
   });
 
   res.status(200).json({

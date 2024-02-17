@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   contactUs,
   getContactUs,
+  rejectionMail,
   replyQuery,
   userStats,
 } from '../controllers/miscellaneous.controller.js';
@@ -17,4 +18,5 @@ router
 
 router.post('/contact/getContactUs', getContactUs);
 router.post('/contact/replyQuery', replyQuery);
+router.post('/rejectionMail', rejectionMail);
 export default router;

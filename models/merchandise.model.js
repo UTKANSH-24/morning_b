@@ -12,6 +12,11 @@ const merchandiseSchema = new Schema({
         required: true,
         trim: true,
     },
+    registrantId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     clothId: {
         type: String,
         required: true,
