@@ -5,7 +5,7 @@ import Merchandise from '../models/merchandise.model.js';
 
 
 export const registerTshirt = asyncHandler(async (req, res, next) => {
-    console.log(req.body);
+    // console.log(req.body);
 
     const {
         nameOnCloth,
@@ -18,7 +18,6 @@ export const registerTshirt = asyncHandler(async (req, res, next) => {
         phoneNumber,
         rollNumber,
         wtpNumber } = req.body;
-
     try {
         const order = await Merchandise.create({
             nameOnCloth,
@@ -34,12 +33,15 @@ export const registerTshirt = asyncHandler(async (req, res, next) => {
             registrantId: req.user.id,
         });
 
-        console.log(order);
+
 
         if (!order) {
             return next(new AppError('Problem in placing order.', 404));
         }
-
+        const user = await User.findById(req.user.id);
+        user.registeredOrders.push(order._id);
+        // console.log(order);
+        await user.save();
         return res.status(201).json({
             success: true,
             message: 'Order placed successfully',
@@ -47,7 +49,7 @@ export const registerTshirt = asyncHandler(async (req, res, next) => {
         });
 
     } catch (err) {
-        console.log(err);
+        // console.log(err);
         res.status(500).json({ success: false, message: 'Server error.' })
     }
 
@@ -57,7 +59,7 @@ export const registerTshirt = asyncHandler(async (req, res, next) => {
 export const getUnverifiedPaymentList = asyncHandler(async (req, res, next) => {
     const { clothId } = req.params;
     if (clothId) {
-        const pendingVerification = await Merchandise.find({ clothId, paymentVerified: false }).populate('registrantId','email');
+        const pendingVerification = await Merchandise.find({ clothId, paymentVerified: false }).populate('registrantId', 'email');
         return res.status(200).json({
             success: true,
             data: pendingVerification,

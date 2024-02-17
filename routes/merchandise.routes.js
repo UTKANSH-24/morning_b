@@ -13,7 +13,7 @@ import { isLoggedIn } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 
-router.route("/registerTshirt").post(registerTshirt);
+router.route("/registerTshirt").post(isLoggedIn,registerTshirt);
 router.route("/getUnverifiedPaymentList").post(isLoggedIn, getUnverifiedPaymentList);
 router.route("/getUnverifiedPaymentList/:clothId").post(isLoggedIn, getUnverifiedPaymentList);
 

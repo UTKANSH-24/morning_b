@@ -50,7 +50,7 @@ export const getMyBookingList = asyncHandler(async (req, res, next) => {
     const id = req.user.id;
     const user = await User.findById(id)
         .populate('registeredAccommodations',
-            'teamName accommodationType fromDate toDate numberOfPersons paymentVerified paymentReferenceNumber totalNumberOfDiet');
+            'accommodationType numberOfPersons numberOfDays paymentVerified paymentReferenceNumber totalNumberOfDiet');
 
     if (!user) {
         return next(new AppError('User not found', 404));
