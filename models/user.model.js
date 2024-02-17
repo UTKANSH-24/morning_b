@@ -43,9 +43,9 @@ const userSchema = new Schema(
     forgotPasswordExpiry: Date,
     signupToken: String,
     signupTokenExpiry: Date,
-    signupverified:{
-           type:Boolean,
-           default: false,
+    signupverified: {
+      type: Boolean,
+      default: false,
     },
     registeredEvents: [
       {
