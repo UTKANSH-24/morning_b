@@ -134,6 +134,22 @@ export const gettcacordinatorByEventId = asyncHandler(async (req, res, next) => 
     tcacoordinator: event.tcacoordinator,
   });
 });
+export const getfacultycordinatorByEventId = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+   console.log("id-ff",id)
+  const event = await Event.findById(id);
+  console.log("event",event)
+  if (!event) {
+    return next(new AppError('Invalid Course id or Course not found.', 408));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Course participants fetched successfully',
+    facultycoordinator: event.facultycoordinator,
+  });
+});
+
 
 
 export const addParticipantToEventById = asyncHandler(async (req, res, next) => {
@@ -246,37 +262,37 @@ export const addclubcoordinatorById = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const addtcacordinatorToEventById = asyncHandler(async (req, res, next) => {
-  const { userid } = req.body;
+// export const addtcacordinatorToEventById = asyncHandler(async (req, res, next) => {
+//   const { userid } = req.body;
 
 
-  const { id } = req.params;
+//   const { id } = req.params;
 
-  let tcacoordinator = {};
+//   let tcacoordinator = {};
 
-  if (!userid) {
-    return next(new AppError('userid is required', 400));
-  }
+//   if (!userid) {
+//     return next(new AppError('userid is required', 400));
+//   }
 
-  const event = await Event.findById(id);
+//   const event = await Event.findById(id);
 
-  if (!event) {
-    return next(new AppError('Invalid Event id or Event not found.', 400));
-  }
+//   if (!event) {
+//     return next(new AppError('Invalid Event id or Event not found.', 400));
+//   }
 
 
-  event.tcacoordinator.push({
-    userid,
-  });
+//   event.tcacoordinator.push({
+//     userid,
+//   });
 
-  await event.save();
+//   await event.save();
 
-  res.status(200).json({
-    success: true,
-    message: 'Tca  cordinator added sucessfully',
-    event,
-  });
-});
+//   res.status(200).json({
+//     success: true,
+//     message: 'Tca  cordinator added sucessfully',
+//     event,
+//   });
+// });
 
 export const addfacultycoordinatorById = asyncHandler(async (req, res, next) => {
   const { userid, name, department } = req.body;
@@ -346,6 +362,10 @@ export const removeParticipantsFromEvent = asyncHandler(async (req, res, next) =
   const tcacoordinatorj = event.tcacoordinator.findIndex(
     (lecture) => lecture._id.toString() === lectureId.toString()
   );
+  const facultycoordinatorj = event.facultycoordinator.findIndex(
+    (lecture) => lecture._id.toString() === lectureId.toString()
+  );
+
 
   if (lectureIndex !== -1) {
 
@@ -394,7 +414,15 @@ export const removeParticipantsFromEvent = asyncHandler(async (req, res, next) =
       message: 'Tcacoordinator removed successfully',
     });
   }
+  if (facultycoordinatorj !== -1) {
 
+    event.facultycoordinator.splice(facultycoordinatorj, 1);
+    await event.save();
+    res.status(200).json({
+      success: true,
+      message: 'Facultycoordinator removed successfully',
+    });
+  }
 
 });
 
