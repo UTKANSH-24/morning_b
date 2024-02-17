@@ -7,6 +7,7 @@ import {
     changeAccommodationVerificationStatus,
     getMyBookingList,
     getAllRoomList,
+    deleteRequest,
 } from "../controllers/accommodation.controller.js"
 import { isLoggedIn } from "../middlewares/auth.middleware.js";
 const router = Router();
@@ -23,5 +24,6 @@ router.route('/getVerifiedAccommodationList').post(isLoggedIn, getVerifiedAccomm
 router.route('/changeAccommodationVerificationStatus').post(isLoggedIn, changeAccommodationVerificationStatus);
 router.route('/getMyBookingList').post(isLoggedIn, getMyBookingList);
 router.route('/getAllRoomList').post(isLoggedIn, getAllRoomList);
+router.route('/deleteAccommodation').post(isLoggedIn, deleteRequest);
 
 export default router;

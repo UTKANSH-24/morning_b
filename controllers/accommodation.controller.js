@@ -19,7 +19,7 @@ export const registerAccommodation = asyncHandler(async (req, res, next) => {
         accommodationType
     } = req.body;
     console.log(req.user.id);
-    const registrantId= req.user.id;
+    const registrantId = req.user.id;
     const user = await User.findById(registrantId);
     if (!user) {
         return next(new AppError('User not exist', 404));
@@ -99,6 +99,30 @@ export const getVerifiedAccommodationList = asyncHandler(async (req, res, next) 
 
 });
 
+export const deleteRequest = asyncHandler(async (req, res, next) => {
+    console.log(req.body);
+    const { accommodationId } = req.body;
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+        return next(new AppError('User not found', 404));
+    }
+    const index = user.registeredAccommodations.indexOf(accommodationId);
+    if (index !== -1) {
+        user.registeredAccommodations.splice(index, 1);
+    } else {
+        return next(new AppError('Accommodation not found in user schema', 404));
+    }
+    const accommodation = await Accommodation.findByIdAndDelete(accommodationId);
+    user.save();
+    res.status(200).json({
+        success: true,
+        message: 'Deleted successfully',
+        data: accommodation,
+    })
+})
+
 
 export const changeAccommodationVerificationStatus = asyncHandler(async (req, res, next) => {
     const { accommodationId, status } = req.body;
@@ -115,7 +139,7 @@ export const changeAccommodationVerificationStatus = asyncHandler(async (req, re
 });
 
 export const getAllRoomList = asyncHandler(async (req, res, next) => {
-    const rooms = await Accommodation.find({}).populate('registrantId','email');
+    const rooms = await Accommodation.find({}).populate('registrantId', 'email');
     return res.status(200).json({ success: true, data: rooms });
 })
 

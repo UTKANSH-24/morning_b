@@ -108,14 +108,12 @@ app.get('/ping', (_req, res) => {
 // Import all routes
 import userRoutes from './routes/user.routes.js';
 import eventRoutes from './routes/event.routes.js';
-import paymentRoutes from './routes/payment.routes.js';
 import miscRoutes from './routes/miscellaneous.routes.js';
 import merchandiseRoutes from './routes/merchandise.routes.js';
 import accommodation from './routes/accommodation.routes.js';
 
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/event', eventRoutes);
-app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1', miscRoutes);
 app.use('/api/v1/merchandise', merchandiseRoutes);
 app.use('/api/v1/accommodation', accommodation);
