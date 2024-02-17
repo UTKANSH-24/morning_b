@@ -50,7 +50,7 @@ router
   .route('/lecture/:id')
   .post(
     isLoggedIn,
-    authorizeRoles('ADMIN'),
+    authorizeRoles('USER'),
 
     addParticipantToEventById
   )
