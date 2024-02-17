@@ -100,27 +100,30 @@ export const getVerifiedAccommodationList = asyncHandler(async (req, res, next) 
 });
 
 export const deleteRequest = asyncHandler(async (req, res, next) => {
-    console.log(req.body);
-    const { accommodationId } = req.body;
+    try {
+        const { accommodationId } = req.body;
+        const user = await User.findById(req.user.id);
 
-    const user = await User.findById(req.user.id);
-
-    if (!user) {
-        return next(new AppError('User not found', 404));
+        if (!user) {
+            return next(new AppError('User not found', 404));
+        }
+        const index = user.registeredAccommodations.indexOf(accommodationId);
+        if (index !== -1) {
+            user.registeredAccommodations.splice(index, 1);
+        } else {
+            return next(new AppError('Already removed.', 404));
+        }
+        await Accommodation.findByIdAndDelete(accommodationId);
+        user.save();
+        res.status(200).json({
+            success: true,
+            message: 'Deleted successfully',
+        })
+    } catch (err) {
+        console.log(err);
+        return next(new AppError('Server error', 501));
     }
-    const index = user.registeredAccommodations.indexOf(accommodationId);
-    if (index !== -1) {
-        user.registeredAccommodations.splice(index, 1);
-    } else {
-        return next(new AppError('Accommodation not found in user schema', 404));
-    }
-    const accommodation = await Accommodation.findByIdAndDelete(accommodationId);
-    user.save();
-    res.status(200).json({
-        success: true,
-        message: 'Deleted successfully',
-        data: accommodation,
-    })
+    
 })
 
 
