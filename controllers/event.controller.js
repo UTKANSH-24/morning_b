@@ -7,17 +7,18 @@ import AppError from '../utils/AppError.js';
 import User from '../models/user.model.js';
 import sendEmail from '../utils/sendEmail.js';
 
-Event
+
 export const getAllEvents = asyncHandler(async (req, res, next) => {
   const userid = req.user;
   if (userid.role == 'USER') {
     try {
+      console.log("userid.id",userid.id);
       const events = await Event.find({
-        'participants': {
+        'participant': {
           $elemMatch: { enrolledby: userid.id }
         }
       });
-
+        console.log("events",events);
       res.status(200).json({
         success: true,
         message: 'All Events',
@@ -149,6 +150,23 @@ export const getfacultycordinatorByEventId = asyncHandler(async (req, res, next)
     facultycoordinator: event.facultycoordinator,
   });
 });
+export const getclubcordinatorByEventId = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+   console.log("id-ff",id)
+  const event = await Event.findById(id);
+ 
+  if (!event) {
+    return next(new AppError('Invalid Course id or Course not found.', 408));
+  }
+  // console.log("event",event.clubcoordinator),
+  res.status(200).json({
+    success: true,
+    message: 'Course participants fetched successfully',
+    
+    clubcoordinator: event.clubcoordinator,
+  });
+});
+
 
 
 

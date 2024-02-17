@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {
   deleteEventById, updateEventById, removeEvent, updateParticipantVerification, removeParticipantsFromEvent, addfacultycoordinatorById, 
   addclubcoordinatorById, addtcacoordinatorById, addParticipantToEventById, gettcacordinatorByEventId, getParticipantsByEventId,
-  createEvent, getAllEvents,getfacultycordinatorByEventId
+  createEvent, getAllEvents,getfacultycordinatorByEventId,getclubcordinatorByEventId
 } from '../controllers/event.controller.js';
 
 import {
@@ -57,13 +57,15 @@ router
 
 router
   .route('/clubcoordinator/:id')
-  // .get(isLoggedIn, authorizeSubscribers, getParticipantsByEventId) // Added authorizeSubscribers to check if user is admin or subscribed if not then forbid the access to the lectures
+  // Added authorizeSubscribers to check if user is admin or subscribed if not then forbid the access to the lectures
   .post(
     isLoggedIn,
     authorizeRoles('ADMIN'),
     // upload.single('lecture'),
     addclubcoordinatorById
   )
+  .get(isLoggedIn, getclubcordinatorByEventId)
+
 router
   .route('/facultycoordinator/:id')
   .post(
