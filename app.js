@@ -1,26 +1,31 @@
-
-
-
-
-import cookieParser from 'cookie-parser';
-config();
 import express from 'express';
 import { config } from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import errorMiddleware from './middlewares/error.middleware.js';
+
+config(); // This should come after import { config } from 'dotenv';
+
 const app = express();
 // Middlewares
 // Built-In
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+app.use(cookieParser());
+// Server Status Check Route
+app.get('/ping', (_req, res) => {
+  res.send('Pong');
+});
+
 // Third-Party
-// app.use(
-//   cors({
-//     origin: [process.env.FRONTEND_URL],
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: [process.env.FRONTEND_URL],
+    credentials: true,
+  })
+);
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL);
@@ -35,15 +40,6 @@ app.use((req, res, next) => {
     next();
   }
 });
-
-
-app.use(morgan('dev'));
-app.use(cookieParser());
-// Server Status Check Route
-app.get('/ping', (_req, res) => {
-  res.send('Pong');
-});
-
 
 // Import all routes
 import userRoutes from './routes/user.routes.js';
