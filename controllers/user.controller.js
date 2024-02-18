@@ -11,8 +11,8 @@ import Merchandise from '../models/merchandise.model.js';
 import Accommodation from '../models/accommodation.model.js';
 
 const cookieOptions = {
-  // secure: process.env.NODE_ENV === 'production' ? true : false,
-  maxAge: 365 * 24 * 60 * 60 * 1000,
+  secure: process.env.NODE_ENV === 'production' ? true : false,
+  maxAge: 35 * 24 * 60 * 60 * 1000,
   httpOnly: true,
 };
 
@@ -120,6 +120,7 @@ export const loginUser = asyncHandler(async (req, res, next) => {
   const token = await user.generateJWTToken();
 
   user.password = undefined;
+  console.log(token);
 
   res.cookie('token', token, cookieOptions);
 
