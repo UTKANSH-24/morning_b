@@ -136,7 +136,7 @@ export const logoutUser = asyncHandler(async (_req, res, _next) => {
   // Setting the cookie value to null
   res.cookie('token', null, {
     secure: process.env.NODE_ENV === 'production' ? true : false,
-    maxAge: 0,
+    maxAge: 1,
     httpOnly: true,
   });
 
