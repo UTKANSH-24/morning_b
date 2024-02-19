@@ -57,7 +57,7 @@ export const registerUser = asyncHandler(async (req, res, next) => {
 
 
   const signupToken = await userExists.generateSignupToken();
-
+  console.log("signupToken",signupToken);
   await userExists.save();
 
   const verificationUrl = `${process.env.FRONTEND_URL}/verify/${signupToken}`;
