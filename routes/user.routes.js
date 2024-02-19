@@ -12,7 +12,6 @@ import {
   verifyAccount
 } from "../controllers/user.controller.js";
 import { isLoggedIn } from "../middlewares/auth.middleware.js";
-import upload from "../middlewares/multer.middleware.js";
 
 const router = Router();
 

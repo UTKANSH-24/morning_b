@@ -11,9 +11,8 @@ import Merchandise from '../models/merchandise.model.js';
 import Accommodation from '../models/accommodation.model.js';
 
 const cookieOptions = {
-  secure: true,
-  // secure: process.env.NODE_ENV === 'production' ? true : false,
-  maxAge: 5 * 24 * 60 * 60 * 1000,
+  secure: false,
+  expires: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
   httpOnly: true,
 };
 
@@ -125,7 +124,7 @@ export const loginUser = asyncHandler(async (req, res, next) => {
     // console.log(token);
 
     await res.cookie('token', token, cookieOptions);
-
+    // console.log(req.cookies);
     return res.status(200).json({
       success: true,
       message: 'User logged in successfully',

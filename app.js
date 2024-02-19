@@ -20,6 +20,7 @@ app.use(cookieParser());
 const allowedOrigins = [
   "https://utkansh24.vercel.app",
   "http://localhost:3000",
+  "*",
 ];
 
 app.use(cors({
