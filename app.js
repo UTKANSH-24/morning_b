@@ -24,6 +24,7 @@ app.use(
   cors({
     origin: [process.env.FRONTEND_URL],
     credentials: true,
+    exposedHeaders:["Set-Cookie"]
   })
 );
 
@@ -35,8 +36,11 @@ app.use((req, res, next) => {
 
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
+    console.log(req.cookies);
     res.sendStatus(200);
   } else {
+    console.log(JSON.stringify(req.cookies));
+
     next();
   }
 });

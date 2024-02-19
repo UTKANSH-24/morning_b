@@ -11,8 +11,9 @@ import Merchandise from '../models/merchandise.model.js';
 import Accommodation from '../models/accommodation.model.js';
 
 const cookieOptions = {
-  secure: process.env.NODE_ENV === 'production' ? true : false,
-  maxAge: 35 * 24 * 60 * 60 * 1000,
+  secure: true,
+  // secure: process.env.NODE_ENV === 'production' ? true : false,
+  maxAge: 5 * 24 * 60 * 60 * 1000,
   httpOnly: true,
 };
 
@@ -24,7 +25,7 @@ export const registerUser = asyncHandler(async (req, res, next) => {
     return next(new AppError('All fields are required', 408));
   }
   const userExists = await User.findOne({ email });
-  
+
   if (userExists) {
 
     if (userExists.signupverified) {
@@ -98,37 +99,43 @@ export const registerUser = asyncHandler(async (req, res, next) => {
 
 
 export const loginUser = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  if (!email || !password) {
-    return next(new AppError('Email and Password are required', 400));
+    if (!email || !password) {
+      return next(new AppError('Email and Password are required', 400));
+    }
+
+    const user = await User.findOne({ email }).select('+password');
+    if (!user.signupverified) {
+      return next(
+        new AppError('Account Not Verified Please Verify', 401)
+      );
+    }
+
+    if (!(user && (await user.comparePassword(password)))) {
+      return next(
+        new AppError('Email or Password do not match or user does not exist', 401)
+      );
+    }
+
+    const token = await user.generateJWTToken();
+
+    user.password = undefined;
+    // console.log(token);
+
+    await res.cookie('token', token, cookieOptions);
+
+    return res.status(200).json({
+      success: true,
+      message: 'User logged in successfully',
+      user,
+    });
+  } catch (err) {
+    console.log(err);
+    return next(new AppError('Error:' + err, 404));
   }
 
-  const user = await User.findOne({ email }).select('+password');
-  if (!user.signupverified) {
-    return next(
-      new AppError('Account Not Verified Please Verify', 401)
-    );
-  }
-
-  if (!(user && (await user.comparePassword(password)))) {
-    return next(
-      new AppError('Email or Password do not match or user does not exist', 401)
-    );
-  }
-
-  const token = await user.generateJWTToken();
-
-  user.password = undefined;
-  console.log(token);
-
-  res.cookie('token', token, cookieOptions);
-
-  res.status(200).json({
-    success: true,
-    message: 'User logged in successfully',
-    user,
-  });
 });
 
 
@@ -141,7 +148,7 @@ export const logoutUser = asyncHandler(async (_req, res, _next) => {
   });
 
   // Sending the response
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     message: 'User logged out successfully',
   });
