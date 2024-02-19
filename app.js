@@ -17,16 +17,15 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 
 // CORS Configuration
-const allowedOrigins = [
-  "https://utkansh24.vercel.app",
-  "http://localhost:3000",
-  "*",
-];
+// const allowedOrigins = [
+//   "https://utkansh24.vercel.app",
+//   "http://localhost:3000",
+// ];
 
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
+// app.use(cors({
+//   origin: allowedOrigins,
+//   credentials: true,
+// }));
 
 // Custom CORS handling for preflight requests
 app.options('*', cors());
@@ -36,7 +35,26 @@ app.get('/ping', (_req, res) => {
   res.send('Pong');
 });
 
-// Import routes
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin','http://localhost:3000');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    console.log(req.cookies);
+    res.sendStatus(200);
+  } else {
+    console.log('from app',JSON.stringify(req.cookies)+'\n');
+
+    next();
+  }
+});
+
+
+
+// Import all routes
 import userRoutes from './routes/user.routes.js';
 import eventRoutes from './routes/event.routes.js';
 import miscRoutes from './routes/miscellaneous.routes.js';
