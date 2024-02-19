@@ -28,7 +28,7 @@ app.use(cookieParser());
 // }));
 
 // Custom CORS handling for preflight requests
-app.options('*', cors());
+// app.options('*', cors());
 
 // Server Status Check Route
 app.get('/ping', (_req, res) => {
