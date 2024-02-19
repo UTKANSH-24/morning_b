@@ -8,10 +8,15 @@ import errorMiddleware from './middlewares/error.middleware.js';
 config(); // This should come after import { config } from 'dotenv';
 
 const app = express();
-// Middlewares
-// Built-In
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// app.use(
+//   cors({
+//     origin: [process.env.FRONTEND_URL],
+//     credentials: true,
+//   })
+// );
 app.use(morgan('dev'));
 app.use(cookieParser());
 // Server Status Check Route
