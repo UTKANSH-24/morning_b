@@ -18,11 +18,11 @@ app.use(cookieParser());
 
 // CORS Configuration
 const allowedOrigins = [
-  "https://utkansh24.vercel.app",
+  "https://utkansh24.vercel.app/",
   "http://localhost:3000",
 ];
 app.use(cors({
-  origin: allowedOrigins,
+  origin: "https://utkansh24.vercel.app/",
   credentials: true,
 }));
 
