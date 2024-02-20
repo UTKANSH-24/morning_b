@@ -11,11 +11,11 @@ import Merchandise from '../models/merchandise.model.js';
 import Accommodation from '../models/accommodation.model.js';
 
 const cookieOptions = {
-  secure: false,
-  expires: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
+  secure: true,
+  expires: new Date(Date.now() + 35 * 24 * 60 * 60 * 1000), // 5 days from now
   httpOnly: true,
+  sameSite: "None", // Corrected value and attribute name
 };
-
 
 export const registerUser = asyncHandler(async (req, res, next) => {
   const { fullName, email, password } = req.body;
@@ -141,11 +141,7 @@ export const loginUser = asyncHandler(async (req, res, next) => {
 export const logoutUser = asyncHandler(async (_req, res, _next) => {
   // Setting the cookie value to null
   console.log(_req.cookies);
-  res.cookie('token', null, {
-    secure: process.env.NODE_ENV === 'production' ? true : false,
-    maxAge: 1,
-    httpOnly: true,
-  });
+  res.cookie('token', null, cookieOptions);
 
   // Sending the response
   return res.status(200).json({
