@@ -17,8 +17,12 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 
 // CORS Configuration
+const allowedOrigins = [
+  "https://utkansh24.vercel.app",
+  "http://localhost:3000",
+];
 app.use(cors({
-  origin: '*',
+  origin: allowedOrigins,
   credentials: true,
 }));
 
