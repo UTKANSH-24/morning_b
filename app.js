@@ -38,7 +38,7 @@ import merchandiseRoutes from './routes/merchandise.routes.js';
 import accommodationRoutes from './routes/accommodation.routes.js';
 
 // Route middleware
-app.use('/user', userRoutes);
+app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/event', eventRoutes);
 app.use('/api/v1', miscRoutes);
 app.use('/api/v1/merchandise', merchandiseRoutes);
