@@ -16,14 +16,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(cookieParser());
 
-const allowedOrigins = [
-  "https://utkansh24.vercel.app",
-  "http://localhost:3000",
-];
-app.use(cors({
-  origin: "https://utkansh24.vercel.app/",
-  credentials: true,
-}));
+// const allowedOrigins = [
+//   "https://utkansh24.vercel.app",
+//   "http://localhost:3000",
+// ];
+// app.use(cors({
+//   origin: "https://utkansh24.vercel.app/",
+//   credentials: true,
+// }));
+
+// Custom CORS handling for preflight requests
+app.options('*', cors());
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', "https://utkansh24.vercel.app" );
@@ -40,8 +43,6 @@ app.use((req, res, next) => {
 });
 
 
-// Custom CORS handling for preflight requests
-app.options('*', cors());
 
 // Server Status Check Route
 app.get('/ping', (_req, res) => {
