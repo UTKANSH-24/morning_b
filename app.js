@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 // CORS Configuration
 app.use(cors({
-  origin: '*', // Allow requests from any origin
+  origin: '*',
   credentials: true,
 }));
 
@@ -28,22 +28,6 @@ app.options('*', cors());
 // Server Status Check Route
 app.get('/ping', (_req, res) => {
   res.send('Pong');
-});
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    console.log(req.cookies);
-    res.sendStatus(200);
-  } else {
-    console.log('from app', JSON.stringify(req.cookies) + '\n');
-
-    next();
-  }
 });
 
 // Import all routes
